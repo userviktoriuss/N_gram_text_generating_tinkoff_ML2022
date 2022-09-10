@@ -44,21 +44,40 @@ class NGramModel:
         return resp
 
     # TODO: add seed to random
-    def generate(self, length, seed=time.time()):
-        np.random.seed(int(1000 * seed) % (2 ** 32))
+    def generate(self, length, prefix='', seed=int(time.time() * 1000) % (2 ** 32)):
+        np.random.seed(seed)
         sequence = deque()
         response = ''
 
-        # first n-gram
+        # begging of the text and the first n-gram
+        prefix = self.prepare(prefix)
+
+        if len(prefix) < self.N:
+            # if we can't use prefix as the first n-gram,
+            # fill it up with random values
+            # TODO: try to fill with existing n-gram,
+            #  that starts with prefix
+            i = len(prefix)
+            to_use = self.random_ngram()
+            prefix = list(prefix)  # make mutable
+            while i < self.N:
+                prefix.append(to_use[i])
+                i += 1
+            prefix = tuple(prefix)  # make immutable again
+
         for word in self.random_ngram():
             sequence.append(word)
+            if len(sequence) > self.N:
+                sequence.popleft()
             response += word + ' '
 
         # generating text
         for i in range(length - self.N):
             key = tuple(sequence)
             if key not in self.model:
-                # get random ngram. actually, it's better to get random among the nearest
+                # get random ngram.
+                # TODO: get random among the nearest
+                #  (max number of respectively equal numbers)
                 key = self.random_ngram()
             to_choose = self.model[key]
             word = np.random.choice(to_choose)
