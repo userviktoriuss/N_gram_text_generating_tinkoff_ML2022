@@ -8,14 +8,14 @@ def main():
     parser.add_argument(
         '--model',
         type=str,
-        default='models/model.pkl',
-        help='provide a path to load model (default: models/model.pkl)'
+        default='model.pkl',
+        help='provide the path to load model (default: model.pkl)'
     )
-    parser.add_argument(  # TODO: change default value
+    parser.add_argument(
         '--prefix',
         type=str,
         default='',
-        help='provide a prefix to start text with (default: '')'
+        help="provide the prefix to start text with (default: '')"
     )
     parser.add_argument(
         '--length',
